@@ -1,0 +1,37 @@
+project: BLOCKNET
+tag: BLOCK
+
+git: https://github.com/BlocknetDX/
+cmc: https://coinmarketcap.com/currencies/blocknet/
+web: https://blocknet.co/
+blockdx DEX: https://blockdx.com/
+
+coop fazer&nnmfnwl&chaos&c3x&jpm dxmakerbot repo:
+https://github.com/nnmfnwl7/dxmakerbot/tree/fazer_dxmakerbot_latest
+https://github.com/nnmfnwl7/dxmakerbot/tree/fazer_dxmakerbot_latest_beta
+https://github.com/nnmfnwl7/dxmakerbot/tree/fazer_dxmakerbot_latest_alfa
+https://github.com/nnmfnwl7/dxmakerbot/tree/fazer_dxmakerbot_latest_dev
+
+blocknet qt fast compile clone and compile update 2020.02.09:
+
+# clone github repository into git.blocknet directory
+git clone https://github.com/blocknetdx/blocknet.git git.blocknet
+cd git.blocknet
+
+# prepare
+sh autogen.sh
+
+# system compatibility issues fix
+make -C depends bdb boost openssl
+tar xvzf depends/built/x86_64-pc-linux-gnu/bdb/*.tar.gz -C ./depends/x86_64-pc-linux-gnu/
+tar xvzf depends/built/x86_64-pc-linux-gnu/openssl/*.tar.gz -C ./depends/x86_64-pc-linux-gnu/
+tar xvzf depends/built/x86_64-pc-linux-gnu/boost/*.tar.gz -C ./depends/x86_64-pc-linux-gnu/
+
+# configure without tests
+./configure LDFLAGS="-L`pwd`/depends/x86_64-pc-linux-gnu/lib/" CPPFLAGS="-I`pwd`/depends/x86_64-pc-linux-gnu/include/" --with-boost-libdir=`pwd`/depends/x86_64-pc-linux-gnu/lib/ --disable-bench --disable-gui-tests --disable-tests --enable-static --enable-silent-rules --enable-reduce-exports --disable-zmq
+
+# make with by using 4 threads
+make -j4
+
+# run blocknet on low hw pc
+export MALLOC_ARENA_MAX=1 && cd src/qt/ && ./blocknet-qt -printtoconsole -dbcache=100 -maxmempool=100 -maxconnections=20 -par=2 -rpcthreads=1
